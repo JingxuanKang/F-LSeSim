@@ -212,16 +212,20 @@ class PatchSim(nn.Module):
         self.patch_size = patch_size
         self.use_norm = norm
 
-    def forward(self, feat, patch_ids=None):
+    def forward(self, feat_source,feat_target, patch_ids=None):
         """
         Calculate the similarity for selected patches
         """
-        B, C, W, H = feat.size()
+        B, C, W, H = feat_source.size()
         # 这部是都减去一个均值，在图片的宽高维度，应该是为了更稳定。
-        feat = feat - feat.mean(dim=[-2, -1], keepdim=True)
-        feat = F.normalize(feat, dim=1) if self.use_norm else feat / np.sqrt(C)
-        query, key, patch_ids = self.select_patch(feat, patch_ids=patch_ids)
-        patch_sim = query.bmm(key) if self.use_norm else torch.tanh(query.bmm(key)/10)
+        feat_source = feat_source - feat_source.mean(dim=[-2, -1], keepdim=True)
+        feat_source = F.normalize(feat_source, dim=1) if self.use_norm else feat_source / np.sqrt(C)
+        feat_target = feat_target - feat_target.mean(dim=[-2, -1], keepdim=True)
+        feat_target = F.normalize(feat_target, dim=1) if self.use_norm else feat_target / np.sqrt(C)
+
+        query_source, key_source, patch_ids = self.select_patch(feat_source, patch_ids=patch_ids)
+        query_target, key_target, patch_ids = self.select_patch(feat_source, patch_ids=patch_ids)
+        patch_sim = query_source.bmm(key_target) if self.use_norm else torch.tanh(query_source.bmm(key_target)/10)
         if patch_ids is not None:
             patch_sim = patch_sim.view(B, len(patch_ids), -1)
 
@@ -316,10 +320,10 @@ class SpatialCorrelativeLoss(nn.Module):
             conv = getattr(self, 'conv_%d' % layer)
             f_src, f_tgt = conv(f_src), conv(f_tgt)
             f_other = conv(f_other) if f_other is not None else None
-        sim_src, patch_ids = self.patch_sim(f_src, patch_ids)
-        sim_tgt, patch_ids = self.patch_sim(f_tgt, patch_ids)
+        sim_src, patch_ids = self.patch_sim(f_src,f_tgt, patch_ids)
+        sim_tgt, patch_ids = self.patch_sim(f_tgt,f_src, patch_ids)
         if f_other is not None:
-            sim_other, _ = self.patch_sim(f_other, patch_ids)
+            sim_other, _ = self.patch_sim(f_other, f_other,patch_ids)
         else:
             sim_other = None
 

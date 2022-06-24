@@ -12,4 +12,4 @@ python train.py  \
 --display_port 8097 \
 --direction AtoB \
 --patch_size 64
-#\--learned_attn \--augment
+\--learned_attn \--augment

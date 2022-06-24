@@ -1,6 +1,6 @@
 set -ex
 python train.py  \
---dataroot /home/jingxuankang/dl/F-LSeSim/datasets/sim2real \
+--dataroot /home/jingxuankang/dl/F-LSeSim/datasets/horse2zebra    \
 --name horse2zebra \
 --model sc \
 --gpu_ids 0 \

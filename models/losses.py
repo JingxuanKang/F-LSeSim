@@ -217,6 +217,7 @@ class PatchSim(nn.Module):
         Calculate the similarity for selected patches
         """
         B, C, W, H = feat.size()
+        # 这部是都减去一个均值，在图片的宽高维度，应该是为了更稳定。
         feat = feat - feat.mean(dim=[-2, -1], keepdim=True)
         feat = F.normalize(feat, dim=1) if self.use_norm else feat / np.sqrt(C)
         query, key, patch_ids = self.select_patch(feat, patch_ids=patch_ids)

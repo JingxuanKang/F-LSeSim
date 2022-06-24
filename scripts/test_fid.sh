@@ -1,8 +1,8 @@
 set -ex
 python test_fid.py \
---dataroot /media/lyndon/c6f4bbbd-8d47-4dcb-b0db-d788fe2b25571/dataset/image_translation/horse2zebra \
---checkpoints_dir ./checkpoints \
+--dataroot /home/jingxuankang/dl/F-LSeSim/datasets/horse2zebra \
+--checkpoints_dir ./checkpoints_forcross_similarity \
 --name horse2zebra \
---gpu_ids 1 \
+--gpu_ids 0 \
 --model sc \
 --num_test 0

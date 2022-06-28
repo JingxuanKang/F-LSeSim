@@ -1,9 +1,10 @@
 set -ex
 python train.py  \
---dataroot /home/jingxuankang/dl/F-LSeSim/datasets/horse2zebra    \
---name horse2zebra \
+--dataroot /nobackup/projects/bdliv07/sgjkang/F-LSeSim/datasets/cityscapes \
+--name cityscapes  \
+--checkpoints_dir /nobackup/projects/bdliv07/sgjkang/F-LSeSim/city_check  \
 --model sc \
---gpu_ids 0 \
+--gpu_ids 0  \
 --lambda_spatial 10 \
 --lambda_gradient 0 \
 --attn_layers 4,7,9 \

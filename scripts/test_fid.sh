@@ -1,6 +1,6 @@
 set -ex
 python test_fid.py \
---dataroot /home/jingxuankang/dl/F-LSeSim/datasets/cityscapes \
+--dataroot /nobackup/projects/bdliv07/sgjkang/F-LSeSim/datasets/cityscapes \
 --checkpoints_dir ./city_check  \
 --name cityscapes \
 --gpu_ids 0 \

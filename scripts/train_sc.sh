@@ -2,7 +2,7 @@ set -ex
 python train.py  \
 --dataroot /nobackup/projects/bdliv07/sgjkang/F-LSeSim/datasets/sim2real \
 --name sim2real  \
---checkpoints_dir /nobackup/projects/bdliv07/sgjkang/F-LSeSim/sim2real_check_withc  \
+--checkpoints_dir /nobackup/projects/bdliv07/sgjkang/F-LSeSim/grayscale \
 --model sc \
 --gpu_ids 0  \
 --lambda_spatial 10 \

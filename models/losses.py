@@ -415,8 +415,8 @@ class VGG16(nn.Module):
         self.relu5_2 = torch.nn.Sequential()
         self.relu5_3 = torch.nn.Sequential()
 
-        for x in range(2):
-            self.relu1_1.add_module(str(x), features[x])
+        self.relu1_1.add_module(str(0), nn.Conv2d(3, 64, kernel_size=(3, 3), stride=(1, 1), padding=(1, 1)))
+        self.relu1_1.add_module(str(1), nn.ReLU(inplace=True))
 
         for x in range(2, 4):
             self.relu1_2.add_module(str(x), features[x])
@@ -506,3 +506,12 @@ class VGG16(nn.Module):
             else:
                 return out['relu3_1']
         return out
+
+# # 随机生成一个图片Tensor 1*1*224*224 输如网络，检查每层输出
+# x = torch.randn(1, 1, 224, 224)   # 1*1*224*224
+# out = net(x)
+# print(out.keys())
+# # 检查每层输出的维度
+# for key in out:
+#     print(key, out[key].shape)
+#

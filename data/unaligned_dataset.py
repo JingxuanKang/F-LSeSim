@@ -40,12 +40,12 @@ class UnalignedDataset(BaseDataset):
         if self.opt.isTrain and opt.augment:
             self.transform_aug = transforms.Compose(
                 [transforms.ColorJitter(brightness=0.5, contrast=0.5, saturation=0.5, hue=0.3),
-                 transforms.ToTensor(), transforms.Normalize((0.5, 0.5, 0.5), (0.5, 0.5, 0.5))
+                 transforms.ToTensor(), transforms.Normalize((0.5), (0.5))
                 ]
             )
         else:
             self.transform_aug = None
-        self.transform_tensor = transforms.Compose([transforms.ToTensor(), transforms.Normalize((0.5, 0.5, 0.5), (0.5, 0.5, 0.5))])
+        self.transform_tensor = transforms.Compose([transforms.ToTensor(), transforms.Normalize((0.5), (0.5))])
 
     def __getitem__(self, index):
         """Return a data point and its metadata information.

@@ -1,7 +1,7 @@
 set -ex
 python train.py  \
---dataroot /home/jingxuankang/dl/F-LSeSim/datasets/horse2zebra    \
---name horse2zebra \
+--dataroot /home/jingxuankang/dl/F-LSeSim/datasets/sim2real    \
+--name sim2real \
 --model sc \
 --gpu_ids 0 \
 --lambda_spatial 10 \

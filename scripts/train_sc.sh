@@ -1,8 +1,8 @@
 set -ex
 python train.py  \
---dataroot /nobackup/projects/bdliv07/sgjkang/F-LSeSim/datasets/sim2real \
---name sim2real  \
---checkpoints_dir /nobackup/projects/bdliv07/sgjkang/F-LSeSim/grayscale \
+--dataroot /nobackup/projects/bdliv07/sgjkang/F-LSeSim/datasets/newsim2real \
+--name newsim2real  \
+--checkpoints_dir /nobackup/projects/bdliv07/sgjkang/F-LSeSim/newsim2real \
 --model sc \
 --gpu_ids 0  \
 --lambda_spatial 10 \

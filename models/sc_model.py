@@ -76,10 +76,16 @@ class SCModel(BaseModel):
             self.criterionFeature = losses.PerceptualLoss().to(self.device)
             self.criterionSpatial = losses.SpatialCorrelativeLoss(opt.loss_mode, opt.patch_nums, opt.patch_size, opt.use_norm,
                                     opt.learned_attn, gpu_ids=self.gpu_ids, T=opt.T).to(self.device)
+            self.c1 = losses.SpatialCorrelativeLoss(opt.loss_mode, opt.patch_nums, 32, opt.use_norm,
+                                    opt.learned_attn, gpu_ids=self.gpu_ids, T=opt.T).to(self.device)        
+            self.c2 = losses.SpatialCorrelativeLoss(opt.loss_mode, opt.patch_nums, 16, opt.use_norm,
+                                    opt.learned_attn, gpu_ids=self.gpu_ids, T=opt.T).to(self.device)                    
             self.normalization = losses.Normalization(self.device)
             # define the contrastive loss
             if opt.learned_attn:
                 self.netF = self.criterionSpatial
+                self.netc1 = self.c1
+                self.netc2 = self.c2
                 self.model_names.append('F')
                 self.loss_names.append('spatial')
             else:
@@ -107,7 +113,7 @@ class SCModel(BaseModel):
             self.optimizer_G.zero_grad()
             if self.opt.learned_attn:
                 self.optimizer_F = torch.optim.Adam([{'params': list(filter(lambda p:p.requires_grad, self.netPre.parameters())), 'lr': self.opt.lr*0.0},
-                                        {'params': list(filter(lambda p:p.requires_grad, self.netF.parameters()))}],
+                                        {'params': list(filter(lambda p:p.requires_grad, self.netF.parameters(),self.netc1.parameters(),self.netc2.parameters()))}],
                                          lr=self.opt.lr, betas=(self.opt.beta1, self.opt.beta2))
                 self.optimizers.append(self.optimizer_F)
                 self.optimizer_F.zero_grad()
@@ -210,7 +216,7 @@ class SCModel(BaseModel):
         # forward
         self.forward()
         if self.opt.learned_attn:
-            self.set_requires_grad([self.netF, self.netPre], True)
+            self.set_requires_grad([self.netF,self.netc1,self.netc2, self.netPre], True)
             self.optimizer_F.zero_grad()
             self.backward_F()
             self.optimizer_F.step()
@@ -223,7 +229,7 @@ class SCModel(BaseModel):
         self.set_requires_grad([self.netD], False)
         self.optimizer_G.zero_grad()
         if self.opt.learned_attn:
-            self.set_requires_grad([self.netF, self.netPre], False)
+            self.set_requires_grad([self.netF,self.netc1,self.netc2, self.netPre], False)
         self.backward_G()
         self.optimizer_G.step()
 
@@ -240,9 +246,13 @@ class SCModel(BaseModel):
         total_loss = 0.0
         for i, (feat_src, feat_tgt, feat_oth) in enumerate(zip(feats_src, feats_tgt, feats_oth)):
             loss = self.criterionSpatial.loss(feat_src, feat_tgt, feat_oth, i)
+            loss+= self.c1.loss(feat_src, feat_tgt, feat_oth, i)
+            loss+= self.c2.loss(feat_src, feat_tgt, feat_oth, i)
             total_loss += loss.mean()
 
         if not self.criterionSpatial.conv_init:
             self.criterionSpatial.update_init_()
+            self.c1.update_init_()
+            self.c2.update_init_()
 
         return total_loss / n_layers

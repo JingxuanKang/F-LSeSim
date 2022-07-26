@@ -1,8 +1,8 @@
 set -ex
 python train.py  \
 --dataroot /nobackup/projects/bdliv07/sgjkang/F-LSeSim/datasets/newsim2real \
---name newsim2real  \
---checkpoints_dir /nobackup/projects/bdliv07/sgjkang/F-LSeSim/newsim2real \
+--name sim2realDualBatch  \
+--checkpoints_dir /nobackup/projects/bdliv07/sgjkang/F-LSeSim/Multi_Scale_Sim2Real \
 --model sc \
 --gpu_ids 0  \
 --lambda_spatial 10 \
@@ -12,5 +12,5 @@ python train.py  \
 --gan_mode lsgan \
 --display_port 8097 \
 --direction AtoB \
---patch_size 64
-\--learned_attn \--augment
+--patch_size 64  \
+--learned_attn \--augment
